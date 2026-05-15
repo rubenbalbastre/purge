@@ -8,7 +8,10 @@ from typing import List, Dict, Optional, Any
 import torch
 import numpy as np
 import networkx as nx
-from sklearn.metrics.pairwise import cosine_similarity
+# from sklearn.metrics.pairwise import cosine_similarity
+
+def cosine_similarity():
+    pass  # Placeholder for actual cosine similarity function, e.g. from sklearn
 
 from .base import RewardFunction, RewardConfig
 

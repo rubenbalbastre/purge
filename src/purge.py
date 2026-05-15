@@ -33,6 +33,23 @@ from rewards import RewardFunction, BinaryReward, PageRankWeightedReward, Expone
 from rewards.base import RewardConfig
 
 
+def setup_wandb(project: str = "machine-unlearning-llm") -> bool:
+    """Auto-login to Weights & Biases from environment if available."""
+    import wandb
+
+    api_key = os.getenv("WANDB_API_KEY", "").strip()
+    if api_key:
+        wandb.login(key=api_key, relogin=True)
+    else:
+        try:
+            wandb.login()
+        except Exception:
+            return False
+
+    os.environ.setdefault("WANDB_PROJECT", project)
+    return True
+
+
 def get_reward_class(reward_type: str) -> type[RewardFunction]:
     """
     Get the reward class based on the reward type string.
@@ -117,6 +134,8 @@ def main(cfg: DictConfig) -> None:
         dataset = dataset.select(range(min(cfg.training.dataset_size, len(dataset))))
     print(f"Dataset size: {len(dataset)} samples")
 
+    setup_wandb()
+
     # Training configuration
     training_args = GRPOConfig(
         output_dir=cfg.paths.output_dir,
@@ -128,6 +147,7 @@ def main(cfg: DictConfig) -> None:
         save_strategy=cfg.training.save_strategy,
         save_steps=cfg.training.save_steps,
         save_total_limit=cfg.training.save_total_limit,
+        report_to="wandb"
     )
 
     # Create trainer with the modular reward function

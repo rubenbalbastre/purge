@@ -3,11 +3,10 @@
 
 defaults:
   - entity: 1_Stephen_King
-  - model: phi_3_mini_4k_instruct_3.8b
-  - training: exponential_decay
-  - reward: exponential_decay
+  - model: qwen2.5-1.5b #phi_3_mini_4k_instruct_3.8b
+  - training: default
+  - reward: binary
   - paths: default
-  - optional override paths: local
   - _self_
 
 # Hydra settings

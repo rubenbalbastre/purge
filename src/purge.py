@@ -36,6 +36,7 @@ from rewards.base import RewardConfig
 def setup_wandb(project: str = "machine-unlearning-llm") -> bool:
     """Auto-login to Weights & Biases from environment if available."""
     import wandb
+    import os
 
     api_key = os.getenv("WANDB_API_KEY", "").strip()
     if api_key:

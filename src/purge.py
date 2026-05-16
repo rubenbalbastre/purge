@@ -79,7 +79,7 @@ def get_reward_class(reward_type: str) -> type[RewardFunction]:
 def load_model_and_tokenizer(cfg: DictConfig):
     """Load the model and tokenizer from HuggingFace."""
     print(f"Loading model: {cfg.model.hf_model_id}")
-    model = AutoModelForCausalLM.from_pretrained(cfg.model.hf_model_id)
+    model = AutoModelForCausalLM.from_pretrained(cfg.model.hf_model_id, dtype=torch.float32)
     tokenizer = AutoTokenizer.from_pretrained(cfg.model.hf_model_id)
     return model, tokenizer
 
@@ -148,7 +148,9 @@ def main(cfg: DictConfig) -> None:
         save_strategy=cfg.training.save_strategy,
         save_steps=cfg.training.save_steps,
         save_total_limit=cfg.training.save_total_limit,
-        report_to="wandb"
+        report_to="wandb",
+        bf16=False,
+        fp16=True
     )
 
     # Create trainer with the modular reward function

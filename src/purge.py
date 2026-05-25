@@ -79,9 +79,37 @@ def get_reward_class(reward_type: str) -> type[RewardFunction]:
 def load_model_and_tokenizer(cfg: DictConfig):
     """Load the model and tokenizer from HuggingFace."""
     print(f"Loading model: {cfg.model.hf_model_id}")
-    model = AutoModelForCausalLM.from_pretrained(cfg.model.hf_model_id, dtype=torch.float32)
+    model = AutoModelForCausalLM.from_pretrained(cfg.model.hf_model_id)
     tokenizer = AutoTokenizer.from_pretrained(cfg.model.hf_model_id)
     return model, tokenizer
+
+
+def get_peft_config(cfg: DictConfig, num_hidden_layers: int):
+    from peft import LoraConfig
+    return LoraConfig(
+        r=16,
+        lora_alpha=32,
+        init_lora_weights="gaussian",
+        target_modules=[
+            "q_proj",
+            "k_proj",
+            "v_proj",
+            "o_proj",
+            "gate_proj",
+            "up_proj",
+            "down_proj"
+        ],
+        task_type="CAUSAL_LM",
+        bias="none",
+        layers_pattern="layers",
+        layers_to_transform=list(
+            range(
+                num_hidden_layers - 12,
+                num_hidden_layers,
+            )
+        ),
+    )
+
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="config")
@@ -106,7 +134,8 @@ def main(cfg: DictConfig) -> None:
 
     # Load model and tokenizer
     model, tokenizer = load_model_and_tokenizer(cfg)
-    
+    peft_config = get_peft_config(cfg, num_hidden_layers=model.config.num_hidden_layers)
+
     # Get reward class and create config
     reward_class = get_reward_class(cfg.reward.type)
     
@@ -150,6 +179,8 @@ def main(cfg: DictConfig) -> None:
         save_total_limit=cfg.training.save_total_limit,
         max_completion_length=64,
         report_to="wandb",
+        gradient_checkpointing=True,
+        steps_per_generation=1,
         bf16=False,
         fp16=True
     )
@@ -157,6 +188,7 @@ def main(cfg: DictConfig) -> None:
     # Create trainer with the modular reward function
     trainer = GRPOTrainer(
         model=model,
+        peft_config=peft_config,
         reward_funcs=reward_class.calc_reward,
         args=training_args,
         train_dataset=dataset

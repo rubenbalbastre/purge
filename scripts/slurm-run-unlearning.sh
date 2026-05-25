@@ -2,7 +2,7 @@
 #SBATCH --job-name=slurm-run-purge
 #SBATCH --output=logs/slurm-run-purge-%j.log
 # Request the number of gpus usint "--gres=gpu:<number>". E.g.:
-#SBATCH --gres=gpu:3
+#SBATCH --gres=gpu:2
 # Request more time using "--time=<hours:mins:secs>". E.g.:
 #SBATCH --time=02:30:00
 # Request time partition "--partition=<Partition>". E.g.:

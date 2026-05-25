@@ -181,7 +181,7 @@ def main(cfg: DictConfig) -> None:
         report_to="wandb",
         log_completions=cfg.training.log_completions,
         gradient_checkpointing=True,
-        steps_per_generation=1,
+        steps_per_generation=2,
         bf16=False,
         fp16=True
     )

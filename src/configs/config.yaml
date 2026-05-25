@@ -3,7 +3,7 @@
 
 defaults:
   - entity: 1_Stephen_King
-  - model: qwen2.5-1.5b #phi_3_mini_4k_instruct_3.8b
+  - model: phi_3_mini_4k_instruct_3.8b
   - training: default
   - reward: binary
   - paths: default

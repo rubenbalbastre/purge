@@ -33,7 +33,7 @@ from rewards import RewardFunction, BinaryReward, PageRankWeightedReward, Expone
 from rewards.base import RewardConfig
 
 
-def setup_wandb(project: str = "machine-unlearning-llm") -> bool:
+def setup_wandb(project: str = "purge") -> bool:
     """Auto-login to Weights & Biases from environment if available."""
     import wandb
     import os
@@ -148,6 +148,7 @@ def main(cfg: DictConfig) -> None:
         save_strategy=cfg.training.save_strategy,
         save_steps=cfg.training.save_steps,
         save_total_limit=cfg.training.save_total_limit,
+        max_completion_length=64,
         report_to="wandb",
         bf16=False,
         fp16=True

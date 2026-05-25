@@ -181,6 +181,11 @@ If `wandb` is enabled, runs are tracked automatically. To disable online sync:
 export WANDB_MODE=offline
 ```
 
+Training profiles enable completion logging. At each `training.logging_steps`
+interval, TRL prints a prompt/completion/reward table in the run log, writes
+completion parquet files under the model output directory, and logs the table
+to W&B when enabled.
+
 ## Utility scripts
 
 - `src/minimal.py`: lightweight non-Hydra prototype script for fast experimentation and integration

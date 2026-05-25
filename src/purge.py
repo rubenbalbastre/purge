@@ -179,6 +179,7 @@ def main(cfg: DictConfig) -> None:
         save_total_limit=cfg.training.save_total_limit,
         max_completion_length=64,
         report_to="wandb",
+        log_completions=cfg.training.log_completions,
         gradient_checkpointing=True,
         steps_per_generation=1,
         bf16=False,
